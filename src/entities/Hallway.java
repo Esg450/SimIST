@@ -27,7 +27,7 @@ import javax.swing.Timer;
 public class Hallway extends JPanel implements ActionListener, KeyListener{
     private ArrayList<Table> tables;
     private ArrayList<Divider> dividers;
-    private ArrayList<Object> trashcans;
+    private ArrayList<Trashcan> trashcans;
     private Player1 player1;
     private GameFrame1 theFrame;
     private Timer timer1;
@@ -36,24 +36,28 @@ public class Hallway extends JPanel implements ActionListener, KeyListener{
        super();
        this.addKeyListener(this);
        this.player1 = new Player1(500, 500);
-       
        this.theFrame = new GameFrame1(this);
        this.setFocusable(true);
        this.dividers = new ArrayList<Divider>();
        this.tables = new ArrayList<Table>();
-       populateTablesAndDividers();
+       this.trashcans = new ArrayList<>();
+       populateObjects();
        this.timer1 = new Timer(50, this);
        this.timer1.start();
        
     }
     
-    private void  populateTablesAndDividers(){
+    private void  populateObjects(){
         Table table1 = new Table(50, 100, 400, 50, "Table 1");
-        Table table2 = new Table(50, 100, 400, 200, "Table 1");
-        Table table3 = new Table(50, 100, 400, 350, "Table 1");
+        Table table2 = new Table(50, 100, 400, 200, "Table 2");
+        Table table3 = new Table(50, 100, 400, 350, "Table 3");
         Divider divider1 = new Divider(150, 10, 350, 25, "Divider 1");
         Divider divider2 = new Divider(150, 10, 350, 170, "Divider 2");
         Divider divider3 = new Divider(150, 10, 350, 315, "Divider 3");
+        Trashcan trashcan1 = new Trashcan(30, 125, 0, 175, "Trashcan");
+        
+        trashcans.add(trashcan1);
+        
         dividers.add(divider1);
         dividers.add(divider2);
         dividers.add(divider3);
@@ -63,17 +67,18 @@ public class Hallway extends JPanel implements ActionListener, KeyListener{
         tables.add(table3);
         
     }
+    
     @Override
     public void paintComponent(Graphics g){
        super.paintComponent(g);
        g.clearRect(0, 0, this.getWidth(), this.getHeight());
        player1.paintComponenet(g);
-       paintDesks(g);
+       paintObjects(g);
           
         
     }
     
-     public void paintDesks(Graphics g){
+     public void paintObjects(Graphics g){
       for(int i = 0; i<tables.size(); i++)
        {
            tables.get(i).paintComponent(g);
@@ -81,6 +86,10 @@ public class Hallway extends JPanel implements ActionListener, KeyListener{
       for(int i = 0; i<dividers.size(); i++)
        {
            dividers.get(i).paintComponent(g);
+       }
+      for(int i = 0; i<trashcans.size(); i++)
+       {
+           trashcans.get(i).paintComponent(g);
        }
     }
      
@@ -141,14 +150,14 @@ public class Hallway extends JPanel implements ActionListener, KeyListener{
     /**
      * @return the trashcans
      */
-    public ArrayList<Object> getTrashcans() {
+    public ArrayList<Trashcan> getTrashcans() {
         return trashcans;
     }
 
     /**
      * @param trashcans the trashcans to set
      */
-    public void setTrashcans(ArrayList<Object> trashcans) {
+    public void setTrashcans(ArrayList<Trashcan> trashcans) {
         this.trashcans = trashcans;
     }
 
@@ -205,9 +214,8 @@ public class Hallway extends JPanel implements ActionListener, KeyListener{
 class Table extends Rectangle{
     private int dy;
     private final Dimension size;
-    private Image obstacleImage;
-    private final int obstacleSize;
-    private final int obstacleSpeed;
+    private Image tableImage;
+   
     private String deskID;
     
     
@@ -216,10 +224,6 @@ class Table extends Rectangle{
         
         this.deskID = Name;
         this.size = new Dimension(panelWidth, panelHeight);
-        this.obstacleSize = 100;
-        this.obstacleSpeed = 7;
-        double r = Math.random();
-        int random = (int)(r * panelWidth-50);
         this.setBounds(deskx, desky, panelHeight, panelWidth);  
       
     }
@@ -227,8 +231,9 @@ class Table extends Rectangle{
     
     public void paintComponent(Graphics g){
         move();
-        g.setColor(Color.RED);
-        g.drawRect(this.x, this.y, this.width, this.height);
+        g.setColor(Color.DARK_GRAY);
+        g.draw3DRect(this.x, this.y, this.width, this.height, true);
+        g.fill3DRect(x, y, width, height, true);
     }
     
     public double getCurrentX() {
@@ -252,9 +257,8 @@ class Table extends Rectangle{
 class Divider extends Rectangle{
     private int dy;
     private final Dimension size;
-    private Image obstacleImage;
-    private final int obstacleSize;
-    private final int obstacleSpeed;
+    private Image dividerImage;
+    
     private String deskID;
     
     
@@ -263,10 +267,6 @@ class Divider extends Rectangle{
         
         this.deskID = Name;
         this.size = new Dimension(panelWidth, panelHeight);
-        this.obstacleSize = 100;
-        this.obstacleSpeed = 7;
-        double r = Math.random();
-        int random = (int)(r * panelWidth-50);
         this.setBounds(deskx, desky, panelHeight, panelWidth);  
       
     }
@@ -274,8 +274,50 @@ class Divider extends Rectangle{
     
     public void paintComponent(Graphics g){
         move();
-        g.setColor(Color.RED);
-        g.drawRect(this.x, this.y, this.width, this.height);
+        g.setColor(Color.CYAN);
+        g.draw3DRect(this.x, this.y, this.width, this.height, true);
+        g.fill3DRect(x, y, width, height, true);
+    }
+    
+    public double getCurrentX() {
+        return super.getX();
+    }
+    
+    public double getCurrrentY() {
+        return super.getY();
+    }
+    
+  
+    public void move() {
+        
+        
+    }
+    
+}
+
+
+class Trashcan extends Rectangle{
+    private int dy;
+    private final Dimension size;
+    private Image trashcanImage;
+    private String deskID;
+    
+    
+    public Trashcan(int panelHeight, int panelWidth,int deskx,int desky, String Name) {
+        
+        
+        this.deskID = Name;
+        this.size = new Dimension(panelWidth, panelHeight);
+        this.setBounds(deskx, desky, panelHeight, panelWidth);  
+      
+    }
+    
+    
+    public void paintComponent(Graphics g){
+        move();
+        g.setColor(Color.MAGENTA);
+        g.draw3DRect(this.x, this.y, this.width, this.height, true);
+        g.fill3DRect(x, y, width, height, true);
     }
     
     public double getCurrentX() {
@@ -298,17 +340,17 @@ class Player1 extends Rectangle{
     private int dx;
     private int dy;
     private final Dimension size;
-    private Image skydiverImage;
-    private final int skydiverSize;
-    private final int skydiverSpeed;
+    private Image playerImage;
+    private final int playerSize;
+    private final int playerSpeed;
     
    
     public Player1(int panelWidth, int panelHeight){
         
         this.size = new Dimension(panelWidth, panelHeight);
-        this.skydiverSize = 50;
-        this.skydiverSpeed = 10;
-        this.setBounds(0, 50, skydiverSize, skydiverSize);        
+        this.playerSize = 25;
+        this.playerSpeed = 10;
+        this.setBounds(0, 50, playerSize, playerSize);        
         
     }
 
