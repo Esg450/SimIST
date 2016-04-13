@@ -26,35 +26,72 @@ import javax.swing.Timer;
  */
 public class Hallway extends JPanel implements ActionListener, KeyListener{
     private ArrayList<Table> tables;
-    private ArrayList<Object> dividers;
+    private ArrayList<Divider> dividers;
     private ArrayList<Object> trashcans;
     private Player1 player1;
     private GameFrame1 theFrame;
     private Timer timer1;
     
     public Hallway(){
-        super();
+       super();
        this.addKeyListener(this);
        this.player1 = new Player1(500, 500);
        
        this.theFrame = new GameFrame1(this);
        this.setFocusable(true);
-       
+       this.dividers = new ArrayList<Divider>();
        this.tables = new ArrayList<Table>();
-       
+       populateTablesAndDividers();
        this.timer1 = new Timer(50, this);
        this.timer1.start();
-       this.dividers = new ArrayList<Object>();
+       
     }
     
-    private void  populateTables(){
+    private void  populateTablesAndDividers(){
+        Table table1 = new Table(50, 100, 400, 50, "Table 1");
+        Table table2 = new Table(50, 100, 400, 200, "Table 1");
+        Table table3 = new Table(50, 100, 400, 350, "Table 1");
+        Divider divider1 = new Divider(150, 10, 350, 25, "Divider 1");
+        Divider divider2 = new Divider(150, 10, 350, 170, "Divider 2");
+        Divider divider3 = new Divider(150, 10, 350, 315, "Divider 3");
+        dividers.add(divider1);
+        dividers.add(divider2);
+        dividers.add(divider3);
+        
+        tables.add(table1);
+        tables.add(table2);
+        tables.add(table3);
+        
+    }
+    @Override
+    public void paintComponent(Graphics g){
+       super.paintComponent(g);
+       g.clearRect(0, 0, this.getWidth(), this.getHeight());
+       player1.paintComponenet(g);
+       paintDesks(g);
+          
         
     }
     
-
+     public void paintDesks(Graphics g){
+      for(int i = 0; i<tables.size(); i++)
+       {
+           tables.get(i).paintComponent(g);
+       }
+      for(int i = 0; i<dividers.size(); i++)
+       {
+           dividers.get(i).paintComponent(g);
+       }
+    }
+     
     @Override
     public void actionPerformed(ActionEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Object o = e.getSource();
+        
+        if(o== timer1){
+            this.repaint();
+
+        }
     }
 
     @Override
@@ -64,13 +101,102 @@ public class Hallway extends JPanel implements ActionListener, KeyListener{
 
     @Override
     public void keyPressed(KeyEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        player1.keyPressed(e);
+        System.out.println("Hi");
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        player1.keyReleased(e);
     }
+
+    /**
+     * @return the tables
+     */
+    public ArrayList<Table> getTables() {
+        return tables;
+    }
+
+    /**
+     * @param tables the tables to set
+     */
+    public void setTables(ArrayList<Table> tables) {
+        this.tables = tables;
+    }
+
+    /**
+     * @return the dividers
+     */
+    public ArrayList<Divider> getDividers() {
+        return dividers;
+    }
+
+    /**
+     * @param dividers the dividers to set
+     */
+    public void setDividers(ArrayList<Divider> dividers) {
+        this.dividers = dividers;
+    }
+
+    /**
+     * @return the trashcans
+     */
+    public ArrayList<Object> getTrashcans() {
+        return trashcans;
+    }
+
+    /**
+     * @param trashcans the trashcans to set
+     */
+    public void setTrashcans(ArrayList<Object> trashcans) {
+        this.trashcans = trashcans;
+    }
+
+    /**
+     * @return the player1
+     */
+    public Player1 getPlayer1() {
+        return player1;
+    }
+
+    /**
+     * @param player1 the player1 to set
+     */
+    public void setPlayer1(Player1 player1) {
+        this.player1 = player1;
+    }
+
+    /**
+     * @return the theFrame
+     */
+    public GameFrame1 getTheFrame() {
+        return theFrame;
+    }
+
+    /**
+     * @param theFrame the theFrame to set
+     */
+    public void setTheFrame(GameFrame1 theFrame) {
+        this.theFrame = theFrame;
+    }
+
+    /**
+     * @return the timer1
+     */
+    public Timer getTimer1() {
+        return timer1;
+    }
+
+    /**
+     * @param timer1 the timer1 to set
+     */
+    public void setTimer1(Timer timer1) {
+        this.timer1 = timer1;
+    }
+    
+    
+    
+    
     
 }
 
@@ -90,11 +216,58 @@ class Table extends Rectangle{
         
         this.deskID = Name;
         this.size = new Dimension(panelWidth, panelHeight);
-        this.obstacleSize = 50;
+        this.obstacleSize = 100;
         this.obstacleSpeed = 7;
         double r = Math.random();
         int random = (int)(r * panelWidth-50);
-        this.setBounds(deskx, desky, obstacleSize, obstacleSize);  
+        this.setBounds(deskx, desky, panelHeight, panelWidth);  
+      
+    }
+    
+    
+    public void paintComponent(Graphics g){
+        move();
+        g.setColor(Color.RED);
+        g.drawRect(this.x, this.y, this.width, this.height);
+    }
+    
+    public double getCurrentX() {
+        return super.getX();
+    }
+    
+    public double getCurrrentY() {
+        return super.getY();
+    }
+    
+  
+    public void move() {
+        
+        
+    }
+    
+}
+
+
+
+class Divider extends Rectangle{
+    private int dy;
+    private final Dimension size;
+    private Image obstacleImage;
+    private final int obstacleSize;
+    private final int obstacleSpeed;
+    private String deskID;
+    
+    
+    public Divider(int panelHeight, int panelWidth,int deskx,int desky, String Name) {
+        
+        
+        this.deskID = Name;
+        this.size = new Dimension(panelWidth, panelHeight);
+        this.obstacleSize = 100;
+        this.obstacleSpeed = 7;
+        double r = Math.random();
+        int random = (int)(r * panelWidth-50);
+        this.setBounds(deskx, desky, panelHeight, panelWidth);  
       
     }
     
