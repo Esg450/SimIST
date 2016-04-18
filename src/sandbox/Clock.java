@@ -22,17 +22,18 @@ public class Clock{
     TimerTask task;
     int speed;
     int hours;
-    
+    String display;
+
     public Clock() throws ParseException{
-        
+
         time = new ISTTime();
         progressionOfTime = new Timer();
         speed = 1;
-
+        display = timeDateDisplay(time);
         task = new TimerTask(){
             @Override
-            public void run(){ 
-                
+            public void run(){
+
                if(speed == 0){
                    hours = 0;
                    time.setTime(hours);
@@ -46,15 +47,18 @@ public class Clock{
                    hours = 3;
                    time.setTime(hours);
                }
-             
-               System.out.println(time.showTime() + "    " + time.showDate());
+               display = timeDateDisplay(time);
+
                }
-        };           
+        };
+        startTimer();
     }
-    
+
     public void startTimer(){
         progressionOfTime.scheduleAtFixedRate(task, 1000, 60000);
     }
 
+    public String timeDateDisplay(ISTTime time){
+        return time.showTime() + "    " + time.showDate();
     }
-
+}

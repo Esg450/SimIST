@@ -13,9 +13,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
+import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.Timer;
+import controllers.*;
 
 /**
  *
@@ -27,6 +29,7 @@ public class Floor extends JPanel implements ActionListener, KeyListener {
    private Timer refreshTimer;
    private ArrayList<Room> rooms;
    private player player1;
+   private Room206 room206;
    
    public Floor(String floorName){
        refreshTimer = new Timer (50, this);
@@ -38,7 +41,7 @@ public class Floor extends JPanel implements ActionListener, KeyListener {
        player1 = new player();
        this.addKeyListener(this);
        setFocusable(true);
-        requestFocusInWindow();
+       requestFocusInWindow();
    }
    
    
@@ -55,6 +58,7 @@ public class Floor extends JPanel implements ActionListener, KeyListener {
    }
    
    public void paintComponent(Graphics g){
+
        super.paintComponent(g);
         g.clearRect(0, 0, this.getWidth(), this.getHeight());
        for(int i = 0; i < rooms.size();i++){
@@ -64,11 +68,22 @@ public class Floor extends JPanel implements ActionListener, KeyListener {
        
        for(int i = 0; i<rooms.size();i++){
           if(player1.intersects(rooms.get(i))){
-              JOptionPane.showConfirmDialog(this,"This is room number"+rooms.get(i).getNum()+"Do you want to enter?");
-          }
+              if (JOptionPane.showConfirmDialog(null,"Do you want to enter Room206?","Entering 206",
+                      JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION){
+                  System.out.println("print");
+                  this.setVisible(false);
+                  try {
+                    RoomController r = new RoomController();
+                } catch (Exception ex){
+                    System.err.println(ex);
+                }
+              }
+              else{
+                  
+              }
        }
    }
-   
+}  
    public void actionPerformed(ActionEvent e){
        Object o = e.getSource();
        
@@ -126,12 +141,7 @@ public class Floor extends JPanel implements ActionListener, KeyListener {
             g.drawRect(x, y, 30, 30);
         }
     }
-   
-   
-   
-   
-   
-   
+ 
    private class Room extends Rectangle{
        private int roomNum;
        private int floor;
